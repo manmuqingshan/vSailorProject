@@ -115,7 +115,7 @@ git clone https://github.com/vseasky/VersaAssistant.git
 - build/release/platform/x64/bin
 - build/release/platform/x86/bin
 - build/debug/platform/x64/bin
-- build/debug/platform/x64/bin
+- build/debug/platform/x86/bin
 
 ![image.png](https://www.liuwei.pub/pic/2024/10/18/6711c38d29087.png)
 
