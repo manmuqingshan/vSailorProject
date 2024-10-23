@@ -348,14 +348,14 @@ void VersaSideWidget::creatPhysicalSerialWidget()
 						{
 								tr("无"),
 								tr("偶校验"),
-								tr("无奇校验")
+								tr("奇校验")
 							
 						};
 				pSerialButtonName->setText(tr("奇偶校验"));
 				pSerialComboBox->addItem(tr("无"), QSerialPort::Parity(QSerialPort::NoParity));
 				pSerialComboBox->addItem(tr("偶校验"),
 				                         QSerialPort::Parity(QSerialPort::EvenParity));
-				pSerialComboBox->addItem(tr("无奇校验"),
+				pSerialComboBox->addItem(tr("奇校验"),
 				                         QSerialPort::Parity(QSerialPort::OddParity));
 				connect(pSerialComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index)
 				{
