@@ -466,7 +466,7 @@ void VersaSideWidget::creatPhysicalInternetWidget()
 		QRegExpValidator *validatorIpv4 = new QRegExpValidator(
 				QRegExp("^(?:(?:\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(?:\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"));
 		pPhysicaInternetComboBox->setValidator(validatorIpv4);
-		
+        pPhysicaInternetComboBox->setEditable(true);
 		connect(pPhysicaInternetComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]()
 		{
 			emit internetAddress(pPhysicaInternetComboBox->currentText());
