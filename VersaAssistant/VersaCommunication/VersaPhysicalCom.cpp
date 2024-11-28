@@ -8,7 +8,6 @@
  * @Description  : 
  */
 
-
 #include "VersaPhysicalCom.h"
 #include "VersaMessageBox.h"
 #include <QTimer>
@@ -345,6 +344,9 @@ void VersaPhysicalCom::disconnectAll()
 	QObject::disconnect(mVersaTcpServerNew);
 }
 
+/*
+ * 定时检测接口
+ * */
 void VersaPhysicalCom::physicaDeviceCheck()
 {
 	// 未就绪
@@ -398,16 +400,28 @@ void VersaPhysicalCom::physicaDeviceCheck()
 		{
 			if (lastInternetListName != InternetListName)
 			{
-				int index = 0;
+                /* index = InternetListName.size() 表示不在当前列表 */
+				int index = InternetListName.size();
 				for (uint16_t iInternet = 0; iInternet < InternetListName.size(); iInternet++)
 				{
 					if (mAddress == InternetListName[iInternet])
 					{
 						index = iInternet;
 					}
-					emit physicaInternetChanged(InternetListName, index);
 				}
-				lastInternetListName = InternetListName;
+                lastInternetListName = InternetListName;
+                if (index == InternetListName.size())
+                {
+                    if(!mAddress.isEmpty())
+                    {
+                        InternetListName.append(mAddress);
+                    }
+                    else
+                    {
+                        index = 0;
+                    }
+                }
+                emit physicaInternetChanged(InternetListName, index);
 			}
 		}
 		
@@ -698,7 +712,6 @@ void VersaPhysicalCom::toggleOpenPhysicalCom()
 				case eInternetTcpSocket:
 				{
 					toggleOpenPhysicalTcpSocket();
-					
 					break;
 				}
 				case eInternetUdpSocket:

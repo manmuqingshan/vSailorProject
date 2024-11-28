@@ -13,10 +13,11 @@
 #include <QDateTime>
 #include <QList>
 #include <QThread>
-
+#include <QNetworkProxy>
 // 构造函数
 VersaTcpServer::VersaTcpServer(QObject *parent) : QTcpServer(parent)
 {
+    this->setProxy(QNetworkProxy::NoProxy);
 	// 监视Tcp服务器状态
 	connect(this, &QTcpServer::newConnection,
 	        this, &VersaTcpServer::newConnect);

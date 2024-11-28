@@ -13,10 +13,10 @@
 #include <QNetworkInterface>
 #include <QThread>
 #include <QDebug>
-
+#include <QNetworkProxy>
 VersaTcpSocket::VersaTcpSocket(QObject *parent) : QTcpSocket(parent)
 {
-
+    this->setProxy(QNetworkProxy::NoProxy);
 }
 
 VersaTcpSocket::~VersaTcpSocket()
@@ -28,7 +28,7 @@ bool VersaTcpSocket::openSocket(void)
 {
 	closeSocket();
 	this->connectToHost(mAddress, mPort);
-	return (this->waitForConnected(10 * 1000));
+	return (this->waitForConnected(1000));
 }
 
 void VersaTcpSocket::closeSocket(void)

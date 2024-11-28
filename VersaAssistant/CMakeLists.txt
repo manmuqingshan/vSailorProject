@@ -130,9 +130,9 @@ else ()
 #            ${PROJECT_HEADER_FILES}
 #            ${PROJECT_SOURCE_FILES})
 
-        add_executable(${VersaAssistantName} WIN32
-                ${PROJECT_HEADER_FILES}
-                ${PROJECT_SOURCE_FILES})
+    add_executable(${VersaAssistantName} WIN32
+            ${PROJECT_HEADER_FILES}
+            ${PROJECT_SOURCE_FILES})
 endif ()
 
 target_include_directories(${VersaAssistantName} PRIVATE

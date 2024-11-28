@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-set(APP_VERSION 1.0.1)
+set(APP_VERSION 1.0.2)
 # 设置软件版本，同步git版本
 if (NOT APP_VERSION)
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})

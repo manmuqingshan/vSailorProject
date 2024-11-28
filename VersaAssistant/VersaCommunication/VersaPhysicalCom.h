@@ -185,7 +185,7 @@ private:
 	QStringList lastInternetListName;
 	QStringList SerialListName;
 	QStringList UsbHidListName;
-	QStringList InternetListName;
+	QStringList InternetListName;       //识别到的接口
 	
 	int mVersaInternetIndex = 0;
 	int mVersaPhysicaIndex = 0;

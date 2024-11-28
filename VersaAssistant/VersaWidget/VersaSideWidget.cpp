@@ -99,6 +99,12 @@ void VersaSideWidget::setPhysicaInternetCombox(const QStringList &listString, in
 	}
 }
 
+bool VersaSideWidget::isValidIPv4(const QString& ip)
+{
+    isIpv4.setAddress(ip);
+    // 检查地址是否有效且是 IPv4 地址
+    return (isIpv4.isNull() == false) && (isIpv4.protocol() == QAbstractSocket::IPv4Protocol)&&(ip.count('.')==3);
+}
 VersaSideWidget::VersaSideWidget(const QByteArray &buffer, QWidget *parent) :
 		QWidget(parent),
 		mSidebarWidth(300),
@@ -463,17 +469,27 @@ void VersaSideWidget::creatPhysicalInternetWidget()
 		pInternetQVBoxLayout->addWidget(mIpInfo);
 		
 		pIpButtonName->setText(tr("服务器IP地址"));
+        pPhysicaInternetComboBox->setEditable(true);
 		QRegExpValidator *validatorIpv4 = new QRegExpValidator(
 				QRegExp("^(?:(?:\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(?:\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"));
+
+        QRegularExpression ipRegex(
+                R"(^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)"
+        );
 		pPhysicaInternetComboBox->setValidator(validatorIpv4);
-        pPhysicaInternetComboBox->setEditable(true);
-		connect(pPhysicaInternetComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]()
-		{
-			emit internetAddress(pPhysicaInternetComboBox->currentText());
-		});
-		
-		
-		QWidget *mPortInfo = new QWidget(this);
+//		connect(pPhysicaInternetComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]()
+//		{
+//			emit internetAddress(pPhysicaInternetComboBox->currentText());
+//		});
+        connect(pPhysicaInternetComboBox, &QComboBox::currentTextChanged, this, [=]()
+        {
+            if(isValidIPv4(pPhysicaInternetComboBox->currentText()))
+            {
+                emit internetAddress(pPhysicaInternetComboBox->currentText());
+            }
+        });
+
+        QWidget *mPortInfo = new QWidget(this);
 		QHBoxLayout *pPortHBoxLayout = new QHBoxLayout(mPortInfo);
 		pPortHBoxLayout->setSpacing(mSpacing);
 		pPortHBoxLayout->setContentsMargins(0, 0, 0, 0);

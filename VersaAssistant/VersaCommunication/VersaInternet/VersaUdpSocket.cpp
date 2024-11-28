@@ -11,11 +11,12 @@
 
 #include "VersaUdpSocket.h"
 #include <QNetworkInterface>
+#include <QNetworkProxy>
 #include <QDebug>
 
 VersaUdpSocket::VersaUdpSocket(QObject *parent) : QUdpSocket(parent)
 {
-
+    this->setProxy(QNetworkProxy::NoProxy);
 }
 
 VersaUdpSocket::~VersaUdpSocket()

@@ -501,7 +501,7 @@ void VersaDockWidget::createSendWidget(void)
 			pSendTimerWidget->setMinimumHeight(32);
 			
 			pSendTimerCtr->setContentsMargins(0, 0, 0, 0);
-			pSendTimerQSpinBox->setMinimum(10);
+			pSendTimerQSpinBox->setMinimum(5);
 			pSendTimerQSpinBox->setMaximum(10000);
 			pSendTimerQSpinBox->setMinimumWidth(112);
 			QLabel *pSendTimerUnit = new QLabel(tr("ms/次"), pSendTimerWidget); // 单位

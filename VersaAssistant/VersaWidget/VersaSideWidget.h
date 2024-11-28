@@ -17,7 +17,7 @@
 #include <QStackedLayout>
 #include <QComboBox>
 #include <QPointer>
-
+#include <QHostAddress>
 
 class VersaSideWidget : public QWidget
 {
@@ -63,12 +63,13 @@ public slots:
 	void setPhysicaLibusbCombox(const QStringList &listString, int index);
 	void setPhysicaSerialCombox(const QStringList &listString, int index);
 	void setPhysicaInternetCombox(const QStringList &listString, int index);
+    bool isValidIPv4(const QString& ip);
 private:
 	int mSpacing = 8;
 	const int mSidebarWidth = 450;
 	bool mSidebarHidden = false;
-	
-	QWidget *pParentWidget;
+    QHostAddress isIpv4;
+    QWidget *pParentWidget;
 	QPointer<QStackedLayout> pStackedLayout;
 	QPointer<QComboBox> pPhysicaSerialCombox;
 	QPointer<QComboBox> pPhysicaLibusbCombox;

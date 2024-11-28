@@ -341,8 +341,8 @@ int make_protocol(protocol_struct *pProtocol)
 	// 更新设备ID
 	pMessageStruct->pData[8] = (pFrameStruct->frame_user.header.device_id >> 0) & 0xff;
 	pMessageStruct->pData[9] = (pFrameStruct->frame_user.header.device_id >> 8) & 0xff;
-	pMessageStruct->pData[10] = (pFrameStruct->frame_user.header.device_id >> 0) & 0xff;
-	pMessageStruct->pData[11] = (pFrameStruct->frame_user.header.device_id >> 8) & 0xff;
+	pMessageStruct->pData[10] = (pFrameStruct->frame_user.header.device_id >> 16) & 0xff;
+	pMessageStruct->pData[11] = (pFrameStruct->frame_user.header.device_id >> 24) & 0xff;
 	// 更新设备ID
 	pMessageStruct->pData[12] = (pFrameStruct->frame_user.header.data_id >> 0) & 0xff;
 	pMessageStruct->pData[13] = (pFrameStruct->frame_user.header.data_id >> 8) & 0xff;
