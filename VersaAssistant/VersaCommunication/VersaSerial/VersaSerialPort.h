@@ -36,10 +36,11 @@ public slots:
 	bool open(void);
 	bool close(void);
 signals:
-
+	void errorClose();
 private:
 	void debugInfo();
 	bool openSerialPort(QSerialPort *port, QIODevice::OpenMode mode);
+	void handleSerialError(QSerialPort::SerialPortError error);
 };
 
 #endif // VSERIALPORT

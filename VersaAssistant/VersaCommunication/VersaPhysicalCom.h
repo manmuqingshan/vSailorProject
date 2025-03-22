@@ -82,8 +82,8 @@ public slots:
 	void readReceiveFileData(void);
 	void startThread();
 	void toggleOpenReleased();
+	void closeCurrentConnect(void);
 	void disconnectAll();
-	
 	// 设置模式
 	void setPhysicaIndex(int index);
 	
@@ -128,6 +128,7 @@ public slots:
 private:
 	// 切换打开状态
 	void toggleOpenPhysicalCom();
+	void ClosePhysicalCom();
 	// 数据发送接口
 	void startWrite(const QString &address, quint16 port, const QByteArray &data);
 	// 发送数据
@@ -152,13 +153,15 @@ private:
 	bool toggleOpenPhysicalLibusbHid();
 	bool writePhysicalLibusbHid(const QByteArray &data);
 	
+	
 	QMetaObject::Connection mVersaSerialRead;
 	QMetaObject::Connection mVersaTcpServerRead;
 	QMetaObject::Connection mVersaTcpSocketRead;
 	QMetaObject::Connection mVersaUdpSocketRead;
 	QMetaObject::Connection mVersaLibUsbRead;
 	QMetaObject::Connection mVersaTcpServerNew;
-	
+	QMetaObject::Connection mVersaConnectError;
+
 	QPointer<VersaSerialPort> pVersaSerialPort;
 	QPointer<VersaTcpServer> pVersaTcpServer;
 	QPointer<VersaTcpSocket> pVersaTcpSocket;

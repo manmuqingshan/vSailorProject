@@ -16,7 +16,7 @@
 
 VersaSerialPort::VersaSerialPort(QObject *parent) : QObject(parent), mSerialPort(this)
 {
-
+	connect(&mSerialPort, &QSerialPort::errorOccurred, this, &VersaSerialPort::handleSerialError);
 }
 
 VersaSerialPort::~VersaSerialPort(void)
@@ -29,16 +29,22 @@ VersaSerialPort::~VersaSerialPort(void)
 	}
 };
 
+void VersaSerialPort::handleSerialError(QSerialPort::SerialPortError error)
+{
+    if (error == QSerialPort::ResourceError) 
+	{
+		mSerialPort.close();
+		emit errorClose();
+	}
+}
 void VersaSerialPort::refreshListSerial(void)
 {
 	qint32 SerialComCnt = 0;
 	this->mSerialPortCnt = 0;
-	
 	if (this->pSerialComInfo != nullptr)
 	{
 		delete[] this->pSerialComInfo;
 	}
-	
 	this->mSerialPortCnt = QSerialPortInfo::availablePorts().length();
 	this->pSerialComInfo = new VersaSerialInfoStruct[this->mSerialPortCnt];
 	SerialComCnt = 0;
@@ -91,9 +97,7 @@ bool VersaSerialPort::openSerialPort(QSerialPort *port, QIODevice::OpenMode mode
 	port->setParity(mSerialPortStruct.mSerialParrity);
 	//设置数据流控
 	port->setFlowControl(mSerialPortStruct.mSerialFlowControl);
-	
 	port->setReadBufferSize(1024);
-	
 	result = port->open(mode);
 	return result;
 }

@@ -27,6 +27,7 @@ public:
 	void setPort(quint16 port);
 	QStringList refreshListTcpSocket(void);
 signals:
+	void errorClose();
 private:
 	QHostAddress mAddress;
 	quint16 mPort;

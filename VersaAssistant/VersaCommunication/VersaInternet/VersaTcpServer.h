@@ -33,6 +33,7 @@ public:
 	QStringList refreshListTcpServer(void);
 signals:
 	void readyRead(QTcpSocket *socket);
+	void errorClose();
 	void newConnectSignals(QTcpSocket *socket);
 private:
 	void closeAllSocket(void);

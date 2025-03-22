@@ -50,6 +50,7 @@ public:
 	int portIndex;
 signals:
 	void readyRead();
+	void errorClose();
 protected:
 	void run() override;
 private:

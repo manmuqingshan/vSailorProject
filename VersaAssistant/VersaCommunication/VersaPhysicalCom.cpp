@@ -1,11 +1,11 @@
-/** 
+/**
  * @License      : All interpretation rights of this software belong to the author, and operations such as reprinting and
  * @			   sharing are prohibited without permission.
  * @Author       : Copyright (c), vseasky.liu vseasky@yeah.net.
  * @Github       : https://github.com/vseasky
  * @Date         : 2024-06-02 23:53:05
  * @FilePath     : \VersaAssistant\VersaCommunication\VersaPhysicalCom.cpp
- * @Description  : 
+ * @Description  :
  */
 
 #include "VersaPhysicalCom.h"
@@ -17,14 +17,14 @@
 #include <QMessageBox>
 #include <QApplication>
 
-VersaPhysicalCom *pVersaPhysicalComAddr = nullptr;
-QThread *pVersaPhysicalComThreadAddr = nullptr;
+VersaPhysicalCom* pVersaPhysicalComAddr = nullptr;
+QThread* pVersaPhysicalComThreadAddr = nullptr;
 
-const char *ipAddrString = "\n[%1:%2]";
-const char *timeStampStringTx = "\n[hh:mm:ss.zzz.zzz]Tx:";
-const char *timeStampStringRx = "\n[hh:mm:ss.zzz.zzz]Rx:";
+const char* ipAddrString = "\n[%1:%2]";
+const char* timeStampStringTx = "\n[hh:mm:ss.zzz.zzz]Tx:";
+const char* timeStampStringRx = "\n[hh:mm:ss.zzz.zzz]Rx:";
 
-VersaPhysicalCom *VersaPhysicalComGetFun()
+VersaPhysicalCom* VersaPhysicalComGetFun()
 {
 	if (pVersaPhysicalComAddr == nullptr)
 	{
@@ -42,7 +42,7 @@ VersaPhysicalCom *VersaPhysicalComGetFun()
 	}
 }
 
-VersaPhysicalCom *VersaPhysicalComFreeFun()
+VersaPhysicalCom* VersaPhysicalComFreeFun()
 {
 	if (pVersaPhysicalComAddr != nullptr)
 	{
@@ -56,8 +56,8 @@ VersaPhysicalCom *VersaPhysicalComFreeFun()
 	}
 }
 
-VersaPhysicalCom::VersaPhysicalCom(QObject *parent) :
-		QObject(parent)
+VersaPhysicalCom::VersaPhysicalCom(QObject* parent) :
+	QObject(parent)
 {
 	// 注册 QByteArray 类型
 	qRegisterMetaType<QByteArray>("QByteArray");
@@ -72,44 +72,44 @@ VersaPhysicalCom::~VersaPhysicalCom()
 	{
 		pVersaTimerCheck->stop();
 	}
-	
+
 	if (!pVersaSerialPort.isNull())
 	{
 		pVersaSerialPort->deleteLater();
 		pVersaSerialPort = nullptr;
 	}
-	
+
 	if (!pVersaTcpServer.isNull())
 	{
 		pVersaTcpServer->deleteLater();
 		pVersaTcpServer = nullptr;
 	}
-	
+
 	if (!pVersaTcpSocket.isNull())
 	{
 		pVersaTcpSocket->deleteLater();
 		pVersaTcpSocket = nullptr;
 	}
-	
+
 	if (!pVersaUdpSocket.isNull())
 	{
 		pVersaUdpSocket->deleteLater();
 		pVersaUdpSocket = nullptr;
 	}
-	
+
 	if (!pVersaLibusb.isNull())
 	{
 		pVersaLibusb->deleteLater();
 		pVersaLibusb = nullptr;
 	}
-	
+
 	if (!pVersaTimerCheck.isNull())
 	{
 		pVersaTimerCheck->deleteLater();
 		pVersaTimerCheck = nullptr;
 	}
-	
-	
+
+
 	pProtocolVersaTx = nullptr;
 	pProtocolVersaRx = nullptr;
 }
@@ -126,12 +126,12 @@ void VersaPhysicalCom::saveReceiveData(void)
 	{
 		return;
 	}
-	
+
 	if (toggleOpenState == false)
 	{
 		QString dirpath = QFileDialog::getSaveFileName(nullptr, QStringLiteral("保存原始数据"),
-		                                               qApp->applicationDirPath()+"/receivedata.dat",
-		                                               QString(tr("*.dat")));
+													   qApp->applicationDirPath() + "/receivedata.dat",
+													   QString(tr("*.dat")));
 		if (dirpath != NULL)
 		{
 			QFile file(dirpath);
@@ -163,12 +163,12 @@ void VersaPhysicalCom::readReceiveFileData(void)
 	{
 		return;
 	}
-	
+
 	if (toggleOpenState == false)
 	{
 		QString dirpath = QFileDialog::getOpenFileName(nullptr, QStringLiteral("导入原始数据"),
-		                                               qApp->applicationDirPath()+"/receivedata.dat",
-		                                               QString(tr("*.dat")));
+													   qApp->applicationDirPath() + "/receivedata.dat",
+													   QString(tr("*.dat")));
 		if (dirpath != NULL)
 		{
 			QFile file(dirpath);
@@ -211,25 +211,25 @@ void VersaPhysicalCom::startThread()
 	pVersaUdpSocket = new VersaUdpSocket;
 	pVersaLibusb = new VersaLibusb;
 	pVersaTimerCheck = new QTimer;
-	
+
 	pVersaLibusb->start();
-	
+
 	pVersaSerialPort->moveToThread(this->thread());
 	pVersaTcpServer->moveToThread(this->thread());
 	pVersaTcpSocket->moveToThread(this->thread());
 	pVersaUdpSocket->moveToThread(this->thread());
 	pVersaLibusb->moveToThread(this->thread());
-	
+
 	pVersaTimerCheck->setInterval(250);
 	pVersaTimerCheck->setTimerType(Qt::PreciseTimer);
 	pVersaTimerCheck->stop();
-	
+
 	connect(pVersaTimerCheck,
-	        &QTimer::timeout,
-	        this,
-	        &VersaPhysicalCom::physicaDeviceCheck,
-	        Qt::QueuedConnection);
-	
+			&QTimer::timeout,
+			this,
+			&VersaPhysicalCom::physicaDeviceCheck,
+			Qt::QueuedConnection);
+
 	pVersaTimerCheck->start();
 }
 
@@ -246,6 +246,11 @@ void VersaPhysicalCom::toggleOpenReleased()
 		mVersaPhysicaIndex = mVersaReadySetPhysicaIndex;
 	}
 	toggleOpenPhysicalCom();
+}
+
+void VersaPhysicalCom::closeCurrentConnect()
+{
+	ClosePhysicalCom();
 }
 
 void VersaPhysicalCom::protocolEnableChanged(bool enable)
@@ -299,12 +304,12 @@ void VersaPhysicalCom::setSerialFlowControl(QSerialPort::FlowControl flowControl
 	pVersaSerialPort->mSerialPortStruct.setSerialFlowControl(flowControl);
 }
 
-void VersaPhysicalCom::setProtocolTxStruct(protocol_struct *protocol)
+void VersaPhysicalCom::setProtocolTxStruct(protocol_struct* protocol)
 {
 	pProtocolVersaTx = protocol;
 }
 
-void VersaPhysicalCom::setProtocolRxStruct(protocol_struct *protocol)
+void VersaPhysicalCom::setProtocolRxStruct(protocol_struct* protocol)
 {
 	pProtocolVersaRx = protocol;
 }
@@ -342,6 +347,7 @@ void VersaPhysicalCom::disconnectAll()
 	QObject::disconnect(mVersaUdpSocketRead);
 	QObject::disconnect(mVersaLibUsbRead);
 	QObject::disconnect(mVersaTcpServerNew);
+	QObject::disconnect(mVersaConnectError);
 }
 
 /*
@@ -354,7 +360,7 @@ void VersaPhysicalCom::physicaDeviceCheck()
 	{
 		return;
 	}
-	
+
 	if (toggleOpenState == false)
 	{
 		// 获取串口设备信息
@@ -376,31 +382,31 @@ void VersaPhysicalCom::physicaDeviceCheck()
 			}
 			lastSerialListName = pVersaSerialPort->nameDevices;
 		}
-		
+
 		switch (mVersaInternetIndex)
 		{
 			case 0:
-			{
-				InternetListName = pVersaTcpServer->refreshListTcpServer();
-				break;
-			}
+				{
+					InternetListName = pVersaTcpServer->refreshListTcpServer();
+					break;
+				}
 			case 1:
-			{
-				InternetListName = pVersaTcpSocket->refreshListTcpSocket();
-				break;
-			}
+				{
+					InternetListName = pVersaTcpSocket->refreshListTcpSocket();
+					break;
+				}
 			case 2:
-			{
-				InternetListName = pVersaUdpSocket->refreshListUdpSocket();
-				break;
-			}
+				{
+					InternetListName = pVersaUdpSocket->refreshListUdpSocket();
+					break;
+				}
 		}
-		
+
 		if (InternetListName.size() > 0)
 		{
 			if (lastInternetListName != InternetListName)
 			{
-                /* index = InternetListName.size() 表示不在当前列表 */
+				/* index = InternetListName.size() 表示不在当前列表 */
 				int index = InternetListName.size();
 				for (uint16_t iInternet = 0; iInternet < InternetListName.size(); iInternet++)
 				{
@@ -409,22 +415,22 @@ void VersaPhysicalCom::physicaDeviceCheck()
 						index = iInternet;
 					}
 				}
-                lastInternetListName = InternetListName;
-                if (index == InternetListName.size())
-                {
-                    if(!mAddress.isEmpty())
-                    {
-                        InternetListName.append(mAddress);
-                    }
-                    else
-                    {
-                        index = 0;
-                    }
-                }
-                emit physicaInternetChanged(InternetListName, index);
+				lastInternetListName = InternetListName;
+				if (index == InternetListName.size())
+				{
+					if (!mAddress.isEmpty())
+					{
+						InternetListName.append(mAddress);
+					}
+					else
+					{
+						index = 0;
+					}
+				}
+				emit physicaInternetChanged(InternetListName, index);
 			}
 		}
-		
+
 		// 获取USB设备信息
 		pVersaLibusb->refreshLibusbDevice();
 		{
@@ -441,7 +447,7 @@ void VersaPhysicalCom::physicaDeviceCheck()
 	{
 		// 计算接收速率
 		{
-			double timeElapsed = ((double) (readElapsedTimer.elapsed())) / 1000.0;
+			double timeElapsed = ((double)(readElapsedTimer.elapsed())) / 1000.0;
 			if (timeElapsed > 3.0)
 			{
 				readCnt += (0) * (1.0f / 1024.0f);
@@ -456,7 +462,7 @@ void VersaPhysicalCom::physicaDeviceCheck()
 		}
 		// 计算发送速度
 		{
-			double timeElapsed = ((double) (sendElapsedTimer.elapsed())) / 1000.0;
+			double timeElapsed = ((double)(sendElapsedTimer.elapsed())) / 1000.0;
 			if (timeElapsed > 3.0)
 			{
 				sendCnt += (0) * (1.0f / 1024.0f);
@@ -493,7 +499,7 @@ void VersaPhysicalCom::setShowIpAddrEnaabl(bool setValue)
  * @param port
  * @param data
  */
-void VersaPhysicalCom::protocolNoneWrite(const QString &address, quint16 port, const QByteArray &data)
+void VersaPhysicalCom::protocolNoneWrite(const QString& address, quint16 port, const QByteArray& data)
 {
 	if ((mVersaProtocolIndex == eProtocolNone) && (data.size() != 0))
 	{
@@ -501,27 +507,27 @@ void VersaPhysicalCom::protocolNoneWrite(const QString &address, quint16 port, c
 	}
 }
 
-void VersaPhysicalCom::protocolVersaWrite(const QString &address, quint16 port)
+void VersaPhysicalCom::protocolVersaWrite(const QString& address, quint16 port)
 {
 	if (pProtocolVersaTx != nullptr)
 	{
 		make_protocol(pProtocolVersaTx);
-		QByteArray writeData(reinterpret_cast<char *>(&pProtocolVersaTx->message.pData[0]),
-		                     pProtocolVersaTx->message.data_len);
+		QByteArray writeData(reinterpret_cast<char*>(&pProtocolVersaTx->message.pData[0]),
+							 pProtocolVersaTx->message.data_len);
 		// 124 字节只能收到 62字节，感觉是WIN的bug
 		if (pProtocolVersaTx->message.data_len == 124)
 		{
 			writeData.append('\0');
 		}
 		if ((mVersaProtocolIndex == eProtocolVersa) &&
-		    (writeData.size() > 0))
+			(writeData.size() > 0))
 		{
 			startWrite(address, port, writeData);
 		}
 	}
 }
 
-void VersaPhysicalCom::startWrite(const QString &address, quint16 port, const QByteArray &data)
+void VersaPhysicalCom::startWrite(const QString& address, quint16 port, const QByteArray& data)
 {
 	// 当前发送数据长度
 	double currentSendCnt = data.size();
@@ -534,7 +540,7 @@ void VersaPhysicalCom::startWrite(const QString &address, quint16 port, const QB
 	{
 		// 计算发送速度
 		{
-			double timeSendElapsed = ((double) (sendElapsedTimer.elapsed())) / 1000.0;
+			double timeSendElapsed = ((double)(sendElapsedTimer.elapsed())) / 1000.0;
 			if (timeSendElapsed > 0)
 			{
 				sendCnt += (currentSendCnt) * (1.0f / 1024.0f);
@@ -557,20 +563,20 @@ void VersaPhysicalCom::startWrite(const QString &address, quint16 port, const QB
 				switch (mVersaInternetIndex)
 				{
 					case eInternetTcpServer:
-					{
-						appendBuffer.insert(0, QString(ipAddrString).arg(address).arg(port));
-						break;
-					}
+						{
+							appendBuffer.insert(0, QString(ipAddrString).arg(address).arg(port));
+							break;
+						}
 					case eInternetTcpSocket:
-					{
-						appendBuffer.insert(0, QString(ipAddrString).arg(mAddress).arg(mPort));
-						break;
-					}
+						{
+							appendBuffer.insert(0, QString(ipAddrString).arg(mAddress).arg(mPort));
+							break;
+						}
 					case eInternetUdpSocket:
-					{
-						appendBuffer.insert(0, QString(ipAddrString).arg(address).arg(port));
-						break;
-					}
+						{
+							appendBuffer.insert(0, QString(ipAddrString).arg(address).arg(port));
+							break;
+						}
 				}
 			}
 			if (enableTimestamp == true)
@@ -581,6 +587,10 @@ void VersaPhysicalCom::startWrite(const QString &address, quint16 port, const QB
 			mVersaReadData.append(appendBuffer);
 			emit refreshReadBuffer();
 		}
+	}
+	else
+	{
+		
 	}
 }
 
@@ -606,7 +616,7 @@ void VersaPhysicalCom::clearStatistics()
 	readUtilization = 0;
 }
 
-void VersaPhysicalCom::parseProtocol(QByteArray &data)
+void VersaPhysicalCom::parseProtocol(QByteArray& data)
 {
 	int result;
 	if (pProtocolVersaRx != nullptr)
@@ -620,14 +630,14 @@ void VersaPhysicalCom::parseProtocol(QByteArray &data)
 		startProtocolIndex = data.indexOf(PROTOCOL_HEAD_ID, lastProtocolStartIndex);
 		if (startProtocolIndex != -1)
 		{
-			const char *pParseData = data.constData() + startProtocolIndex;
+			const char* pParseData = data.constData() + startProtocolIndex;
 			int dataSize = data.size();
-			
-			int currentParseLength = qMin((int) (dataSize - startProtocolIndex),
-			                              (int) (pProtocolVersaRx->message.max_data_len));
-			
+
+			int currentParseLength = qMin((int)(dataSize - startProtocolIndex),
+										  (int)(pProtocolVersaRx->message.max_data_len));
+
 			if ((lastProtocolStartIndex <= startProtocolIndex) &&
-			    (currentParseLength >= DATAS_MIN_SIZE))
+				(currentParseLength >= DATAS_MIN_SIZE))
 			{
 				memcpy(&pProtocolVersaRx->message.pData[0], pParseData + startProtocolIndex, currentParseLength);
 				result = parse_protocol(pProtocolVersaRx, currentParseLength);
@@ -635,56 +645,56 @@ void VersaPhysicalCom::parseProtocol(QByteArray &data)
 				{
 					// 解析成功
 					case PROTOCOL_RESULT_OK:
-					{
-						// 记录成功的位置，下一次的位置在此之后
-						lastProtocolStartIndex = startProtocolIndex + pProtocolVersaRx->message.data_len;
-						emit refreshProtocolRx();
-						// 还可以继续解析
-						if (lastProtocolStartIndex + DATAS_MIN_SIZE < dataSize)
 						{
+							// 记录成功的位置，下一次的位置在此之后
+							lastProtocolStartIndex = startProtocolIndex + pProtocolVersaRx->message.data_len;
+							emit refreshProtocolRx();
+							// 还可以继续解析
+							if (lastProtocolStartIndex + DATAS_MIN_SIZE < dataSize)
+							{
+								parseProtocol(data);
+							}
+							break;
+						}
+					case PROTOCOL_RESULT_ERR:
+						{
+							// 转到下一个帧头检测
+							lastProtocolStartIndex = startProtocolIndex + 2;
+							parseProtocol(data);
+							break;
+						}
+					case PROTOCOL_RESULT_CHECK_HEAD_ERR:
+						{
+							// 转到下一个帧头检测
+							lastProtocolStartIndex = startProtocolIndex + 2;
+							parseProtocol(data);
+							break;
+						}
+					case PROTOCOL_RESULT_CHECK_FRAME_ERR:
+						{
+							// 数据帧头检查成功，但是数据损坏，移动到帧头之后检查新数据包，损坏数据包丢弃
+							lastProtocolStartIndex = startProtocolIndex + DATAS_OFFSET_ADDR;
+							parseProtocol(data);
+							break;
+						}
+					case PROTOCOL_RESULT_OUT_OF_MSG_LEN:
+						{
+							// 超出解析长度，数据包出错，解析下一个数据包
+							lastProtocolStartIndex = startProtocolIndex + DATAS_OFFSET_ADDR;
+							parseProtocol(data);
+							break;
+						}
+					case PROTOCOL_RESULT_OUT_OF_DATA_LEN:
+						{
+							// 通过包头计算，还未收到完整的数据包，等待下一个数据包来即可。
+							break;
+						}
+					default:
+						{
+							// 转到下一个帧头检测
+							lastProtocolStartIndex = startProtocolIndex + 2;
 							parseProtocol(data);
 						}
-						break;
-					}
-					case PROTOCOL_RESULT_ERR:
-					{
-						// 转到下一个帧头检测
-						lastProtocolStartIndex = startProtocolIndex + 2;
-						parseProtocol(data);
-						break;
-					}
-					case PROTOCOL_RESULT_CHECK_HEAD_ERR:
-					{
-						// 转到下一个帧头检测
-						lastProtocolStartIndex = startProtocolIndex + 2;
-						parseProtocol(data);
-						break;
-					}
-					case PROTOCOL_RESULT_CHECK_FRAME_ERR:
-					{
-						// 数据帧头检查成功，但是数据损坏，移动到帧头之后检查新数据包，损坏数据包丢弃
-						lastProtocolStartIndex = startProtocolIndex + DATAS_OFFSET_ADDR;
-						parseProtocol(data);
-						break;
-					}
-					case PROTOCOL_RESULT_OUT_OF_MSG_LEN:
-					{
-						// 超出解析长度，数据包出错，解析下一个数据包
-						lastProtocolStartIndex = startProtocolIndex + DATAS_OFFSET_ADDR;
-						parseProtocol(data);
-						break;
-					}
-					case PROTOCOL_RESULT_OUT_OF_DATA_LEN:
-					{
-						// 通过包头计算，还未收到完整的数据包，等待下一个数据包来即可。
-						break;
-					}
-					default:
-					{
-						// 转到下一个帧头检测
-						lastProtocolStartIndex = startProtocolIndex + 2;
-						parseProtocol(data);
-					}
 				}
 			}
 		}
@@ -696,37 +706,91 @@ void VersaPhysicalCom::toggleOpenPhysicalCom()
 	switch (mVersaPhysicaIndex)
 	{
 		case ePhysicalSerial:
-		{
-			toggleOpenPhysicalSerial();
-			break;
-		}
-		case ePhysicalInternet:
-		{
-			switch (mVersaInternetIndex)
 			{
-				case eInternetTcpServer:
-				{
-					toggleOpenPhysicalTcpServer();
-					break;
-				}
-				case eInternetTcpSocket:
-				{
-					toggleOpenPhysicalTcpSocket();
-					break;
-				}
-				case eInternetUdpSocket:
-				{
-					toggleOpenPhysicalUdpSocket();
-					break;
-				}
+				toggleOpenPhysicalSerial();
+				break;
 			}
-			break;
-		}
+		case ePhysicalInternet:
+			{
+				switch (mVersaInternetIndex)
+				{
+					case eInternetTcpServer:
+						{
+							toggleOpenPhysicalTcpServer();
+							break;
+						}
+					case eInternetTcpSocket:
+						{
+							toggleOpenPhysicalTcpSocket();
+							break;
+						}
+					case eInternetUdpSocket:
+						{
+							toggleOpenPhysicalUdpSocket();
+							break;
+						}
+				}
+				break;
+			}
 		case ePhysicalLibusb:
-		{
-			toggleOpenPhysicalLibusbHid();
-			break;
-		}
+			{
+				toggleOpenPhysicalLibusbHid();
+				break;
+			}
+	}
+	emit refreshOpenState(toggleOpenState);
+}
+
+
+void VersaPhysicalCom::ClosePhysicalCom()
+{
+	switch (mVersaPhysicaIndex)
+	{
+		case ePhysicalSerial:
+			{
+				qDebug()<<"ePhysicalSerial";
+				pVersaSerialPort->close();
+				toggleOpenState = false;
+				disconnectAll();
+				break;
+			}
+		case ePhysicalInternet:
+			{
+				switch (mVersaInternetIndex)
+				{
+					case eInternetTcpServer:
+						{
+							qDebug()<<"eInternetTcpServer";
+							pVersaTcpServer->closeServer();
+							toggleOpenState = false;
+							disconnectAll();
+							break;
+						}
+					case eInternetTcpSocket:
+						{
+							pVersaTcpSocket->closeSocket();
+							toggleOpenState = false;
+							disconnectAll();
+							break;
+						}
+					case eInternetUdpSocket:
+						{
+							pVersaUdpSocket->closeSocket();
+							toggleOpenState = false;
+							disconnectAll();
+							break;
+						}
+				}
+				break;
+			}
+		case ePhysicalLibusb:
+			{
+				qDebug()<<"ePhysicalLibusb";
+				pVersaLibusb->closeLibusbHid();
+				toggleOpenState = false;
+				disconnectAll();
+				break;
+			}
 	}
 	emit refreshOpenState(toggleOpenState);
 }
@@ -738,47 +802,47 @@ void VersaPhysicalCom::toggleOpenPhysicalCom()
  * @param data
  * @return
  */
-bool VersaPhysicalCom::writeData(const QString &address, quint16 port, const QByteArray &data)
+bool VersaPhysicalCom::writeData(const QString& address, quint16 port, const QByteArray& data)
 {
 	if (toggleOpenState == false)
 	{
 		return false;
 	}
-	
+
 	switch (mVersaPhysicaIndex)
 	{
 		case ePhysicalSerial:
-		{
-			return writePhysicalSerial(data);
-			break;
-		}
-		case ePhysicalInternet:
-		{
-			switch (mVersaInternetIndex)
 			{
-				case eInternetTcpServer:
-				{
-					return writePhysicalTcpServer(QHostAddress(address), port, data);
-					break;
-				}
-				case eInternetTcpSocket:
-				{
-					return writePhysicalTcpSocket(data);
-					break;
-				}
-				case eInternetUdpSocket:
-				{
-					return writePhysicalUdpSocket(QHostAddress(address), port, data);
-					break;
-				}
+				return writePhysicalSerial(data);
+				break;
 			}
-			break;
-		}
+		case ePhysicalInternet:
+			{
+				switch (mVersaInternetIndex)
+				{
+					case eInternetTcpServer:
+						{
+							return writePhysicalTcpServer(QHostAddress(address), port, data);
+							break;
+						}
+					case eInternetTcpSocket:
+						{
+							return writePhysicalTcpSocket(data);
+							break;
+						}
+					case eInternetUdpSocket:
+						{
+							return writePhysicalUdpSocket(QHostAddress(address), port, data);
+							break;
+						}
+				}
+				break;
+			}
 		case ePhysicalLibusb:
-		{
-			return writePhysicalLibusbHid(data);
-			break;
-		}
+			{
+				return writePhysicalLibusbHid(data);
+				break;
+			}
 	}
 }
 
@@ -786,14 +850,13 @@ bool VersaPhysicalCom::writeData(const QString &address, quint16 port, const QBy
  * 读取数据接口
  * @param data
  */
-void VersaPhysicalCom::readData(QByteArray &data)
+void VersaPhysicalCom::readData(QByteArray& data)
 {
 	double currentReadCnt = data.size();
 	if ((currentReadCnt == 0) || (toggleOpenState == false))
 	{
 		return;
 	}
-	
 	if (enableTimestamp == true)
 	{
 		readCurrentTime = QDateTime::currentDateTime();
@@ -802,7 +865,7 @@ void VersaPhysicalCom::readData(QByteArray &data)
 	mVersaReadData.append(data);
 	// 计算接收速率
 	{
-		double timeReadElapsed = ((double) (readElapsedTimer.elapsed())) / 1000.0;
+		double timeReadElapsed = ((double)(readElapsedTimer.elapsed())) / 1000.0;
 		if (timeReadElapsed > 0)
 		{
 			readCnt += (currentReadCnt) * (1.0f / 1024.0f);//  kbyte
@@ -815,19 +878,19 @@ void VersaPhysicalCom::readData(QByteArray &data)
 			readElapsedTimer.restart();
 		}
 	}
-	
+
 	switch (mVersaProtocolIndex)
 	{
 		case eProtocolNone:
-		{
-			emit refreshReadBuffer();
-			break;
-		}
+			{
+				emit refreshReadBuffer();
+				break;
+			}
 		case eProtocolVersa:
-		{
-			parseProtocol(mVersaReadData);
-			break;
-		}
+			{
+				parseProtocol(mVersaReadData);
+				break;
+			}
 	}
 }
 
@@ -842,22 +905,23 @@ bool VersaPhysicalCom::toggleOpenPhysicalSerial()
 		{
 			// 2.设置信号与槽
 			mVersaSerialRead =
-					connect(&pVersaSerialPort->mSerialPort, &QSerialPort::readyRead, [=]()
-					{
-						QByteArray mReadByteArray = pVersaSerialPort->mSerialPort.readAll();
-						readData(mReadByteArray);
-					});
-			
+				connect(&pVersaSerialPort->mSerialPort, &QSerialPort::readyRead, [=]()
+				{
+				QByteArray mReadByteArray = pVersaSerialPort->mSerialPort.readAll();
+				readData(mReadByteArray);
+				});
+			mVersaConnectError = 
+				connect(pVersaSerialPort, &VersaSerialPort::errorClose,this,&VersaPhysicalCom::closeCurrentConnect);
 			// 3.计算最高速率
 			{
-				sendMaxSpeed = (((double) pVersaSerialPort->mSerialPortStruct.mSerialBaudRate) *
-				                (pVersaSerialPort->mSerialPortStruct.mSerialDataBits /
-				                 (1 + pVersaSerialPort->mSerialPortStruct.mSerialDataBits +
-				                  (1 + 0.5 * pVersaSerialPort->mSerialPortStruct.mSerialStopBits) +
-				                  bool(pVersaSerialPort->mSerialPortStruct.mSerialParrity)))) / (8.0 * 1024);
+				sendMaxSpeed = (((double)pVersaSerialPort->mSerialPortStruct.mSerialBaudRate) *
+								(pVersaSerialPort->mSerialPortStruct.mSerialDataBits /
+									(1 + pVersaSerialPort->mSerialPortStruct.mSerialDataBits +
+										(1 + 0.5 * pVersaSerialPort->mSerialPortStruct.mSerialStopBits) +
+										bool(pVersaSerialPort->mSerialPortStruct.mSerialParrity)))) / (8.0 * 1024);
 				readMaxSpeed = sendMaxSpeed;
 			}
-			
+
 			readElapsedTimer.start();
 		}
 	}
@@ -869,7 +933,7 @@ bool VersaPhysicalCom::toggleOpenPhysicalSerial()
 	}
 }
 
-bool VersaPhysicalCom::writePhysicalSerial(const QByteArray &data)
+bool VersaPhysicalCom::writePhysicalSerial(const QByteArray& data)
 {
 	qint64 result = -1;
 	result = pVersaSerialPort->mSerialPort.write(data);
@@ -886,36 +950,35 @@ bool VersaPhysicalCom::toggleOpenPhysicalTcpServer()
 	{
 		// 1.断开所有连接
 		disconnectAll();
-		
 		pVersaTcpServer->setAddress(mAddress);
 		pVersaTcpServer->setPort(mPort);
 		toggleOpenState = pVersaTcpServer->openServer();
 		if (toggleOpenState == true)
 		{
 			mVersaTcpServerRead =
-					connect(pVersaTcpServer, &VersaTcpServer::readyRead, this,
-					        [=](QTcpSocket *socket)
-					        {
-						        // 使能了ip地址显示
-						        QByteArray mReadByteArray = socket->readAll();
-						        if (enableShowIpAddr && (mVersaPhysicaIndex == ePhysicalInternet))
-						        {
-							        mReadByteArray.insert(0, QString(ipAddrString)
-									        .arg(socket->peerAddress().toString())
-									        .arg(socket->peerPort()).toUtf8());
-						        }
-						        readData(mReadByteArray);
-					        });
-			
-			mVersaTcpServerNew =
-					connect(pVersaTcpServer, &VersaTcpServer::newConnectSignals, [=](QTcpSocket *socket)
-					{
-						if (socket != nullptr)
+				connect(pVersaTcpServer, &VersaTcpServer::readyRead, this,
+						[=](QTcpSocket* socket)
 						{
-							emit newConnectPeerAddress(socket->peerAddress().toString());
-							emit newConnectPeerPort(socket->peerPort());
+							// 使能了ip地址显示
+						QByteArray mReadByteArray = socket->readAll();
+						if (enableShowIpAddr && (mVersaPhysicaIndex == ePhysicalInternet))
+						{
+							mReadByteArray.insert(0, QString(ipAddrString)
+									.arg(socket->peerAddress().toString())
+									.arg(socket->peerPort()).toUtf8());
 						}
-					});
+						readData(mReadByteArray);
+						});
+			// mVersaConnectError =
+			mVersaTcpServerNew =
+				connect(pVersaTcpServer, &VersaTcpServer::newConnectSignals, [=](QTcpSocket* socket)
+				{
+				if (socket != nullptr)
+				{
+					emit newConnectPeerAddress(socket->peerAddress().toString());
+					emit newConnectPeerPort(socket->peerPort());
+				}
+				});
 			readElapsedTimer.start();
 		}
 	}
@@ -927,9 +990,9 @@ bool VersaPhysicalCom::toggleOpenPhysicalTcpServer()
 	}
 }
 
-bool VersaPhysicalCom::writePhysicalTcpServer(const QHostAddress &address, quint16 port, const QByteArray &data)
+bool VersaPhysicalCom::writePhysicalTcpServer(const QHostAddress& address, quint16 port, const QByteArray& data)
 {
-	QTcpSocket *sendSocket = pVersaTcpServer->findServerSocket(address, port);
+	QTcpSocket* sendSocket = pVersaTcpServer->findServerSocket(address, port);
 	if (sendSocket != nullptr)
 	{
 		qint64 result = -1;
@@ -956,17 +1019,19 @@ bool VersaPhysicalCom::toggleOpenPhysicalTcpSocket()
 		{
 			// 2.设置信号与槽
 			mVersaTcpSocketRead =
-					connect(pVersaTcpSocket, &QTcpSocket::readyRead, [=]()
-					{
-						QByteArray mReadByteArray = pVersaTcpSocket->readAll();
-						if (enableShowIpAddr && (mVersaPhysicaIndex == ePhysicalInternet))
-						{
-							mReadByteArray.insert(0, QString(ipAddrString)
-									.arg(pVersaTcpSocket->peerAddress().toString())
-									.arg(pVersaTcpSocket->peerPort()).toUtf8());
-						}
-						readData(mReadByteArray);
-					});
+				connect(pVersaTcpSocket, &QTcpSocket::readyRead, [=]()
+				{
+				QByteArray mReadByteArray = pVersaTcpSocket->readAll();
+				if (enableShowIpAddr && (mVersaPhysicaIndex == ePhysicalInternet))
+				{
+					mReadByteArray.insert(0, QString(ipAddrString)
+							.arg(pVersaTcpSocket->peerAddress().toString())
+							.arg(pVersaTcpSocket->peerPort()).toUtf8());
+				}
+				readData(mReadByteArray);
+				});
+
+			// mVersaConnectError
 			readElapsedTimer.start();
 		}
 	}
@@ -978,7 +1043,7 @@ bool VersaPhysicalCom::toggleOpenPhysicalTcpSocket()
 	}
 }
 
-bool VersaPhysicalCom::writePhysicalTcpSocket(const QByteArray &data)
+bool VersaPhysicalCom::writePhysicalTcpSocket(const QByteArray& data)
 {
 	if (pVersaTcpSocket->isOpen())
 	{
@@ -1005,25 +1070,26 @@ bool VersaPhysicalCom::toggleOpenPhysicalUdpSocket()
 		{
 			// 2.设置信号与槽
 			mVersaUdpSocketRead =
-					connect(pVersaUdpSocket, &QUdpSocket::readyRead, [=]()
+				connect(pVersaUdpSocket, &QUdpSocket::readyRead, [=]()
+				{
+					QByteArray mReadByteArray;
+					QHostAddress senderAddress;
+					quint16 senderPort;
+					// 读取数据报
+					mReadByteArray.resize(pVersaUdpSocket->pendingDatagramSize());
+					pVersaUdpSocket->readDatagram(mReadByteArray.data(),
+												mReadByteArray.size(),
+												&senderAddress, &senderPort);
+					if (enableShowIpAddr && (mVersaPhysicaIndex == ePhysicalInternet))
 					{
-						QByteArray mReadByteArray;
-						QHostAddress senderAddress;
-						quint16 senderPort;
-						// 读取数据报
-						mReadByteArray.resize(pVersaUdpSocket->pendingDatagramSize());
-						pVersaUdpSocket->readDatagram(mReadByteArray.data(),
-						                              mReadByteArray.size(),
-						                              &senderAddress, &senderPort);
-						if (enableShowIpAddr && (mVersaPhysicaIndex == ePhysicalInternet))
-						{
-							mReadByteArray
-									.insert(0, QString(ipAddrString)
-											.arg(senderAddress.toString())
-											.arg(senderPort).toUtf8());
-						}
-						readData(mReadByteArray);
-					});
+						mReadByteArray
+							.insert(0, QString(ipAddrString)
+									.arg(senderAddress.toString())
+									.arg(senderPort).toUtf8());
+					}
+					readData(mReadByteArray);
+				});
+			//   mVersaConnectError
 			readElapsedTimer.start();
 		}
 	}
@@ -1035,7 +1101,7 @@ bool VersaPhysicalCom::toggleOpenPhysicalUdpSocket()
 	}
 }
 
-bool VersaPhysicalCom::writePhysicalUdpSocket(const QHostAddress &address, quint16 port, const QByteArray &data)
+bool VersaPhysicalCom::writePhysicalUdpSocket(const QHostAddress& address, quint16 port, const QByteArray& data)
 {
 	if (pVersaUdpSocket->isOpen())
 	{
@@ -1059,17 +1125,19 @@ bool VersaPhysicalCom::toggleOpenPhysicalLibusbHid()
 	{
 		// 断开所有连接
 		disconnectAll();
-		readElapsedTimer.start();
 		toggleOpenState = pVersaLibusb->openLibusbHid();
 		if (toggleOpenState == true)
 		{
 			mVersaLibUsbRead =
-					connect(pVersaLibusb, &VersaLibusb::readyRead, this, [=]()
-					        {
-						        QByteArray readBuffer = pVersaLibusb->readAll();
-						        readData(readBuffer);
-					        },
-					        Qt::QueuedConnection);
+				connect(pVersaLibusb, &VersaLibusb::readyRead, this, [=]()
+						{
+							QByteArray readBuffer = pVersaLibusb->readAll();
+							readData(readBuffer);
+						},
+						Qt::QueuedConnection);
+			mVersaConnectError = 
+			connect(pVersaLibusb, &VersaLibusb::errorClose,this,&VersaPhysicalCom::closeCurrentConnect);
+			readElapsedTimer.start();
 		}
 	}
 	else
@@ -1085,7 +1153,7 @@ bool VersaPhysicalCom::toggleOpenPhysicalLibusbHid()
  * @param data
  * @return
  */
-bool VersaPhysicalCom::writePhysicalLibusbHid(const QByteArray &data)
+bool VersaPhysicalCom::writePhysicalLibusbHid(const QByteArray& data)
 {
 	if (pVersaLibusb->isOpen())
 	{
